@@ -11,8 +11,13 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.drive.DriveIO;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -53,15 +58,15 @@ public class Robot extends LoggedRobot {
 
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
-      // Running on a real robot, log to a USB stick
+      //Advantage Kit example code
       case REAL:
-        logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+        logger.addDataReceiver(new WPILOGWriter("C:\\Document!"));
         logger.addDataReceiver(new NT4Publisher());
         break;
 
       // Running a physics simulator, log to local folder
       case SIM:
-        logger.addDataReceiver(new WPILOGWriter(""));
+        logger.addDataReceiver(new WPILOGWriter("C:\\Document!"));
         logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -94,6 +99,30 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+  TrapezoidProfile.Constraints m_Constraints =
+    new TrapezoidProfile.Constraints(1, 1);
+ TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+ 
+ double translationVal = -1.0 * MathUtil.applyDeadband(-robotContainer.controller.getRawAxis(PS4Controller.Axis.kLeftY.value) , 0.25);
+
+ Logger.getInstance().recordOutput("INPUT", translationVal);
+
+ TrapezoidProfile.State m_goal = new TrapezoidProfile.State(translationVal, 0.0);
+ // Create a motion profile with the given maximum velocity and maximum
+ // acceleration constraints for the next setpoint, the desired goal, and the
+ // current setpoint.
+ var profile = new TrapezoidProfile(m_Constraints, m_goal, m_setpoint);
+
+ // Retrieve the profiled setpoint for the next timestep. This setpoint moves
+ // toward the goal while obeying the constraints.
+ m_setpoint = profile.calculate(0.02);
+
+ translationVal = m_setpoint.position;
+
+ Logger.getInstance().recordOutput("OUTPUT", translationVal);
+
+Logger.getInstance().recordOutput("Value", DriveIO.DriveIOInputs.leftPositionRad *2);
   }
 
   /** This function is called once when the robot is disabled. */

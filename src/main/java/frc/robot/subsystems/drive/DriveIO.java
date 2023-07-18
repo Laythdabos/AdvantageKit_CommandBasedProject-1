@@ -5,7 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface DriveIO {
   @AutoLog
   public static class DriveIOInputs {
-    public double leftPositionRad = 0.0;
+    public static double leftPositionRad = 0.0;
     public double leftVelocityRadPerSec = 0.0;
     public double rightPositionRad = 0.0;
     public double rightVelocityRadPerSec = 0.0;
