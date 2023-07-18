@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 
 /**
@@ -60,13 +61,13 @@ public class Robot extends LoggedRobot {
     switch (Constants.currentMode) {
       //Advantage Kit example code
       case REAL:
-        logger.addDataReceiver(new WPILOGWriter("C:\\Document!"));
+        logger.addDataReceiver(new WPILOGWriter("C:\\WPILOG"));
         logger.addDataReceiver(new NT4Publisher());
         break;
 
       // Running a physics simulator, log to local folder
       case SIM:
-        logger.addDataReceiver(new WPILOGWriter("C:\\Document!"));
+        logger.addDataReceiver(new WPILOGWriter("C:\\WPILOG"));
         logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -104,7 +105,7 @@ public class Robot extends LoggedRobot {
     new TrapezoidProfile.Constraints(1, 1);
  TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
  
- double translationVal = -1.0 * MathUtil.applyDeadband(-robotContainer.controller.getRawAxis(PS4Controller.Axis.kLeftY.value) , 0.25);
+ double translationVal = -1.0 * MathUtil.applyDeadband(-robotContainer.controller.getRawAxis(XboxController.Axis.kLeftY.value) , 0.25);
 
  Logger.getInstance().recordOutput("INPUT", translationVal);
 
@@ -120,9 +121,8 @@ public class Robot extends LoggedRobot {
 
  translationVal = m_setpoint.position;
 
- Logger.getInstance().recordOutput("OUTPUT", translationVal);
-
-Logger.getInstance().recordOutput("Value", DriveIO.DriveIOInputs.leftPositionRad *2);
+Logger.getInstance().recordOutput("OUTPUT", translationVal);
+Logger.getInstance().recordOutput("somevalue", DriveIO.DriveIOInputs.leftPositionRad *2);
   }
 
   /** This function is called once when the robot is disabled. */
